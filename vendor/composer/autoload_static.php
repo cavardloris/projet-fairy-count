@@ -88,6 +88,7 @@ class ComposerStaticInit6bc3ad9b5f4e64013fd71c4be76fefbe
         'Category' => __DIR__ . '/../..' . '/models/Categories.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Expense' => __DIR__ . '/../..' . '/models/Expenses.php',
+        'ExpenseManager' => __DIR__ . '/../..' . '/managers/ExpensesManager.php',
         'ExpenseShare' => __DIR__ . '/../..' . '/models/Expenses_share.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Refund' => __DIR__ . '/../..' . '/models/Refunds.php',
