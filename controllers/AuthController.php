@@ -102,6 +102,6 @@
 
         public function notFound():void 
         {
-            $this->render('error/notFound.html.twig');
+            $this->render('error/notFound.html.twig', []);
         }
     }
