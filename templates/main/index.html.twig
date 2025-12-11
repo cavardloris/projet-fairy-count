@@ -32,8 +32,7 @@
             {% for user in users %}
                 <tr>
                     <td>{{ user.id }}</td>
-                    <td>{{ user.firstName }}</td>
-                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
                     <td>
                         <a href="index.php?route=show&id={{ user.id }}" class="btn btn-info">
