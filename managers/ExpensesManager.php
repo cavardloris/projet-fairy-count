@@ -19,10 +19,10 @@ class ExpenseManager extends AbstractManager
 
         foreach($result as $item)
         {
-            $expense = new Expense($item["name"], $item["email"], $item["password"], $item["id"]);
-            $users[] = $user;
+            $expense = new Expense($item["user_id"], $item["amount"], $item["categorieId"], $item["id"]);
+            $expenses[] = $expense;
         }
 
-        return $users;
+        return $expenses;
     }
 }
