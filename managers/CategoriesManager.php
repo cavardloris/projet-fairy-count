@@ -15,14 +15,31 @@
             ];
             $query->execute($parameters);
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
-            $users = [];
+            $categories = [];
 
             foreach($result as $item)
             {
-                $user = new User($item["name"], $item["email"], $item["password"], $item["id"]);
-                $users[] = $user;
+                $category = new Category($item["name"], $item["id"]);
+                $categories[] = $category;
             }
 
-            return $users;
+            return $categories;
+        }
+
+        public function findById(int $id) : ? Category
+        {
+            $query = $this->db->prepare('SELECT * FROM categories WHERE id = :id');
+            $parameters = [
+                "id" => $id
+            ];
+            $query->execute($parameters);
+            $item = $query->fetch(PDO::FETCH_ASSOC);
+
+            if($item)
+            {
+                return new Category($item["name"], $item["id"]);
+            }
+
+            return null;
         }
     }
