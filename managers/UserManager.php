@@ -91,4 +91,15 @@ class UserManager extends AbstractManager
         ];
         $query->execute($parameters);
     }
+
+    public function countAll() : int
+    {
+        $query = $this->db->prepare('SELECT COUNT(*) AS count FROM users');
+        
+        $query->execute();
+        
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+
+        return (int) $result['count'];
+    }
 }
