@@ -8,7 +8,7 @@ class User
 
      public function getName(): string
     {
-        return $this->firstName;
+        return $this->Name;
     }
 
     public function setName(string $name): void
