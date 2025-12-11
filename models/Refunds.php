@@ -2,7 +2,7 @@
 
 class Refund
 {
-    public function __construct( private int $debtorId, private int $creditorId, private float $amount, private ?int $id = null, private ?string $createdAt = null ) {}
+    public function __construct( private User $debtor, private User $creditor,  private float $amount, private ?int $id = null ) {}
 
     public function getId(): ?int
     {
@@ -14,24 +14,24 @@ class Refund
         $this->id = $id;
     }
 
-    public function getDebtorId(): int
+    public function getDebtor(): User
     {
-        return $this->debtorId;
+        return $this->debtor;
     }
 
-    public function setDebtorId(int $debtorId): void
+    public function setDebtor(User $debtor): void
     {
-        $this->debtorId = $debtorId;
+        $this->debtor = $debtor;
     }
 
-    public function getCreditorId(): int
+    public function getCreditor(): User
     {
-        return $this->creditorId;
+        return $this->creditor;
     }
 
-    public function setCreditorId(int $creditorId): void
+    public function setCreditor(User $creditor): void
     {
-        $this->creditorId = $creditorId;
+        $this->creditor = $creditor;
     }
 
     public function getAmount(): float
@@ -43,5 +43,4 @@ class Refund
     {
         $this->amount = $amount;
     }
-
 }
