@@ -2,26 +2,26 @@
 
 class ExpenseShare
 {
-    public function __construct( private int $expensesId, private int $usersId, private float $shareAmounts ) {}
+    public function __construct( private Expense $expense, private User $user, private float $shareAmounts ) {}
 
-    public function getExpensesId(): int
+    public function getExpense(): Expense
     {
-        return $this->expensesId;
+        return $this->expense;
     }
 
-    public function setExpensesId(int $expensesId): void
+    public function setExpense(Expense $expense): void
     {
-        $this->expensesId = $expensesId;
+        $this->expense = $expense;
     }
 
-    public function getUsersId(): int
+    public function getUser(): User
     {
-        return $this->usersId;
+        return $this->user;
     }
 
-    public function setUsersId(int $usersId): void
+    public function setUser(User $user): void
     {
-        $this->usersId = $usersId;
+        $this->user = $user;
     }
 
     public function getShareAmounts(): float
