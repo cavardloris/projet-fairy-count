@@ -95,7 +95,7 @@
             }
             else
             {
-                $this->render('auth/login.html.twig', []);
+                $this->render('main/index.html.twig', []);
             }
             
         }

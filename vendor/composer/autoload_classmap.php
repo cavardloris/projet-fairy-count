@@ -14,6 +14,7 @@ return array(
     'Category' => $baseDir . '/models/Categories.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Expense' => $baseDir . '/models/Expenses.php',
+    'ExpenseManager' => $baseDir . '/managers/ExpensesManager.php',
     'ExpenseShare' => $baseDir . '/models/Expenses_share.php',
     'PhpToken' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
     'Refund' => $baseDir . '/models/Refunds.php',

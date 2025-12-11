@@ -3,7 +3,7 @@
         'name' => 'noa/projet-fairy-count',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '07d1a1fb73fd7b5853b0893ff351bc8f586ab85e',
+        'reference' => 'b578e1206a15d4d235cd5ac0342341010d3d5081',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'noa/projet-fairy-count' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '07d1a1fb73fd7b5853b0893ff351bc8f586ab85e',
+            'reference' => 'b578e1206a15d4d235cd5ac0342341010d3d5081',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
