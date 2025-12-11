@@ -1,0 +1,1 @@
+return (int) $result['count']; Pour la fonction countAll() dans UserManager. Cette ligne va nous permettre de reutiliser cette valeur pour diviser 

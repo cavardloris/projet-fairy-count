@@ -95,12 +95,12 @@
             }
             else
             {
-                $this->render('auth/login.html.twig', []);
+                $this->render('main/index.html.twig', []);
             }
             
         }
 
-        public function notFound():void 
+        public function notFound():void
         {
             $this->render('error/notFound.html.twig', []);
         }
