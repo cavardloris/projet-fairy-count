@@ -9,7 +9,7 @@ class ExpenseManager extends AbstractManager
 
     public function findAll() : array
     {
-        $query = $this->db->prepare('SELECT * FROM expenses');
+        $query = $this->db->prepare('SELECT expenses.*, users.id as user_id, email, name, password FROM expenses JOIN users ON expenses.user_id = users.id');
         $parameters = [
 
         ];
@@ -19,7 +19,8 @@ class ExpenseManager extends AbstractManager
 
         foreach($result as $item)
         {
-            $expense = new Expense($item["user_id"], $item["amount"], $item["categorieId"], $item["id"]);
+            $user = new User($item["name"], $item["email"], $item["password"], $item["user_id"]);
+            $expense = new Expense($user, $item["amount"], $item["categorieId"], $item["id"]);
             $expenses[] = $expense;
         }
 
