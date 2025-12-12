@@ -15,50 +15,6 @@
                 <i class="bi bi-plus-circle"></i> Nouvelle dépense
             </button>
         </div>
-            <table class="table table-striped mt-3">
-                <thead>
-                <tr>
-                    <th>
-                        Débiteur
-                    </th>
-                    <th>
-                        Dépense (Montant dû)
-                    </th>
-                    <th>
-                        Remboursement
-                    </th>
-                    <th>
-                        Créditeur
-                    </th>
-                    <th>
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for refund in refunds %}
-                    <tr>
-                        <td>{{ refund.debtor.name }}</td>
-                        <td>{{ refund.amount|number_format(2, ',', ' ') }} €</td>
-                        <td>
-                            <span class="badge text-bg-warning">En attente</span>
-                        </td>
-                        <td>{{ refund.creditor.name }}</td>
-                        <td>
-                            <a href="index.php?route=validateRefund&id={{ refund.id }}" class="btn btn-success btn-sm">
-                                <span class="bi bi-check-circle"></span> Valider
-                            </a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center">Aucun remboursement en attente. Tout est équilibré !</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </section>
-
         <section class="mt-5">
             <h2 class="h3 mb-4">Dernières Dépenses Enregistrées</h2>
 
@@ -91,12 +47,6 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="index.php?route=showExpense&id={{ expense.id }}" class="btn btn-info btn-sm">
-                                <span class="bi bi-eye"></span>
-                            </a>
-                            <a href="index.php?route=updateExpense&id={{ expense.id }}" class="btn btn-success btn-sm">
-                                <span class="bi bi-pencil"></span>
-                            </a>
                             <a href="index.php?route=deleteExpense&id={{ expense.id }}" class="btn btn-danger btn-sm">
                                 <span class="bi bi-trash"></span>
                             </a>
