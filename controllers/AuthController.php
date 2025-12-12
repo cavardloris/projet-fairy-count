@@ -17,14 +17,26 @@ class AuthController extends AbstractController
 
         $userManager = new UserManager();
         $categoryManager = new CategoriesManager();
+        $expenseManager = new ExpenseManager();
+        $expenseShareManager = new ExpenseShareManager();
 
         $users = $userManager->findAll();
         $categories = $categoryManager->findAll();
+        $expenses = $expenseManager->findAll();
 
+        $expensesData = [];
+        foreach($expenses as $expense) {
+            $shares = $expenseShareManager->findByExpenseId($expense->getId());
+            $expensesData[] = [
+                'expense' => $expense,
+                'shares' => $shares
+            ];
+        }
 
         $this->render('main/index.html.twig', [
             'users' => $users,
-            'categories' => $categories
+            'categories' => $categories,
+            'expensesData' => $expensesData
         ]);
     }
 
