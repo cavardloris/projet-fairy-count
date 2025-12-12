@@ -22,6 +22,9 @@ class Router
             else if($_GET['route'] === 'logout') {
                 $this->ac->logout();
             }
+            else if($_GET['route'] === 'createExpense') {
+                $this->ac->create();
+            }
             else
             {
                 $this->ac->notFound();
