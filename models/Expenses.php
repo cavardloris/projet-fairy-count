@@ -2,7 +2,7 @@
 
 class Expense
 {
-    public function __construct( private User $user, private float $amount, private int $categorieId, private ?int $id = null ) {}
+    public function __construct( private User $user, private float $amount, private Category $categorie, private ?int $id = null ) {}
 
     public function getId(): ?int
     {
@@ -34,13 +34,13 @@ class Expense
         $this->amount = $amount;
     }
 
-    public function getCategorieId(): int
+    public function getCategorie(): Category
     {
-        return $this->categorieId;
+        return $this->categorie;
     }
 
-    public function setCategorieId(int $categorieId): void
+    public function setCategorie(Category $categorie): void
     {
-        $this->categorieId = $categorieId;
+        $this->categorie = $categorie;
     }
 }
