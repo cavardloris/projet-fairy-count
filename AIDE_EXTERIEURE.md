@@ -8,3 +8,6 @@ Dans le fichier RefundsManager, la requete SQL de la fonction FindAll vient de c
                     c.name as creditor_name,
                     c.email as creditor_email FROM refunds INNER JOIN users d ON refunds.debtor_id = d.id INNER JOIN users c ON refunds.creditor_id = c.id ');
 Le prompt: Donne moi la requete sql necessaire pour avoir les infos du debiteur et du crediteur.
+
+Pour la classe Expenses_ShareManager, le code à été réaliser en collaboration avec Gemini ou on lui indiquait ce que l'on voulait et ce qu'on ne voulait pas car le code renvoyé n'etait pas compréhensible à notre niveau
+
