@@ -4,10 +4,12 @@ class Router
 {
     private AuthController $ac;
     private UserController $uc;
+    private ExpenseController $ec;
     public function __construct()
     {
         $this->ac = new AuthController();
         $this->uc = new UserController();
+        $this->ec = new ExpenseController();
     }
 
     public function handleRequest() : void
@@ -23,7 +25,7 @@ class Router
                 $this->ac->logout();
             }
             else if($_GET['route'] === 'createExpense') {
-                $this->ac->create();
+                $this->ec->create();
             }
             else
             {
