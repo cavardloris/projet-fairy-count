@@ -1,1 +1,10 @@
 return (int) $result['count']; Pour la fonction countAll() dans UserManager. Cette ligne va nous permettre de reutiliser cette valeur pour diviser 
+
+
+Dans le fichier RefundsManager, la requete SQL de la fonction FindAll vient de claude ia : $query = $this->db->prepare('SELECT refunds.*, d.id as debtor_id,
+                    d.name as debtor_name,
+                    d.email as debtor_email,
+                    c.id as creditor_id,
+                    c.name as creditor_name,
+                    c.email as creditor_email FROM refunds INNER JOIN users d ON refunds.debtor_id = d.id INNER JOIN users c ON refunds.creditor_id = c.id ');
+Le prompt: Donne moi la requete sql necessaire pour avoir les infos du debiteur et du crediteur.
