@@ -9,7 +9,7 @@ class ExpenseManager extends AbstractManager
 
     public function findAll() : array
     {
-        $query = $this->db->prepare('SELECT expenses.*, users.id as id_users, email, users.name as user_name, password, categories.id as id_category, categories.name as category_name FROM categories JOIN expenses ON categories.id_category = expenses.category_id JOIN users ON expenses.user_id = users.id_users');
+        $query = $this->db->prepare('SELECT expenses.*, users.id as id_users, email, users.name as user_name, password, categories.id as id_category, categories.name as category_name FROM categories JOIN expenses ON categories.id = expenses.category_id JOIN users ON expenses.user_id = users.id');
         $parameters = [
 
         ];
@@ -20,7 +20,7 @@ class ExpenseManager extends AbstractManager
         foreach($result as $item)
         {
             $category = new Category($item['category_name'], $item['id_category']);
-            $user = new User($item["user_name"], $item["email"], $item["password"], $item["user_id"]);
+            $user = new User($item["user_name"], $item["email"], $item["password"], $item["id_users"]);
             $expense = new Expense($user, $item["amount"], $category, $item["id"]);
             $expenses[] = $expense;
         }
@@ -30,7 +30,7 @@ class ExpenseManager extends AbstractManager
 
     public function findById(int $id) : ? Expense
     {
-        $query = $this->db->prepare('SELECT expenses.*, users.id as id_users, email, users.name as user_name, password, categories.id as id_category, categories.name as category_name FROM categories JOIN expenses ON categories.id_category = expenses.category_id JOIN users ON expenses.user_id = users.id_users WHERE expenses.id = :id');
+        $query = $this->db->prepare('SELECT expenses.*, users.id as id_users, email, users.name as user_name, password, categories.id as id_category, categories.name as category_name FROM categories JOIN expenses ON categories.id = expenses.category_id JOIN users ON expenses.user_id = users.id WHERE expenses.id = :id');
         $parameters = [
             "id" => $id
         ];
@@ -40,7 +40,7 @@ class ExpenseManager extends AbstractManager
         if($item)
         {
             $category = new Category($item['category_name'], $item['id_category']);
-            $user = new User($item["user_name"], $item["email"], $item["password"], $item["user_id"]);
+            $user = new User($item["user_name"], $item["email"], $item["password"], $item["id_users"]);
             return new Expense($user, $item["amount"], $category, $item["id"]);
         }
 
