@@ -46,4 +46,17 @@ class ExpenseManager extends AbstractManager
 
         return null;
     }
+
+    public function create(Expense $expense) : ?int
+    {
+        $query = $this->db->prepare('INSERT INTO expenses (user_id, amount, category_id) VALUES (:user_id, :amount, :category_id)');
+        $parameters = [
+            "user_id" => $expense->getUser()->getId(),
+            "amount" => $expense->getAmount(),
+            "category_id" => $expense->getCategorie()->getId()
+        ];
+        $query->execute($parameters);
+
+        return (int) $this->db->lastInsertId();
+    }
 }
