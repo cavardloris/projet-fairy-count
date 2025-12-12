@@ -7,6 +7,7 @@ class AuthController extends AbstractController
             $this->redirect('index.php?controller=index');
         }
     }
+
     public function home() : void
     {
         if(!isset($_SESSION["id"]))
@@ -20,9 +21,13 @@ class AuthController extends AbstractController
         $expenseManager = new ExpenseManager();
         $expenseShareManager = new ExpenseShareManager();
 
+        $refundsManager = new RefundsManager();
+
         $users = $userManager->findAll();
         $categories = $categoryManager->findAll();
         $expenses = $expenseManager->findAll();
+
+        $refunds = $refundsManager->findAll();
 
         $expensesData = [];
         foreach($expenses as $expense) {
@@ -36,7 +41,8 @@ class AuthController extends AbstractController
         $this->render('main/index.html.twig', [
             'users' => $users,
             'categories' => $categories,
-            'expensesData' => $expensesData
+            'expensesData' => $expensesData,
+            'refunds' => $refunds
         ]);
     }
 
