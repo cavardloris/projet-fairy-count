@@ -38,6 +38,8 @@ class ExpenseController extends AbstractController
 
                 if(!empty($selectedUsers) && $expenseId)
                 {
+                    $expenseWithId = new Expense($user, $amount, $category, $expenseId);
+
                     $shareAmount = $amount / (count($selectedUsers) + 1);
 
                     $expenseShareManager = new ExpenseShareManager();
@@ -47,7 +49,7 @@ class ExpenseController extends AbstractController
                         $sharedUser = $userManager->findById(intval($sharedUserId));
                         if($sharedUser)
                         {
-                            $expenseShare = new ExpenseShare($expense, $sharedUser, $shareAmount);
+                            $expenseShare = new ExpenseShare($expenseWithId, $sharedUser, $shareAmount);
                             $expenseShareManager->create($expenseShare);
                         }
                     }
