@@ -2,6 +2,33 @@
 
 class ExpenseController extends AbstractController
 {
+    public function delete() : void
+    {
+        if(!isset($_SESSION["id"]))
+        {
+            $this->redirect('index.php?route=login');
+            return;
+        }
+
+        if(!empty($_GET['id']))
+        {
+            $expenseId = intval($_GET['id']);
+
+            if($expenseId > 0)
+            {
+                $expenseShareManager = new ExpenseShareManager();
+                $expenseManager = new ExpenseManager();
+                $expenseShareManager->deleteByExpenseId($expenseId);
+
+                $expenseManager->delete($expenseId);
+
+                $this->redirect('index.php?success=expense_deleted');
+                return;
+            }
+        }
+
+        $this->redirect('index.php?error=invalid_expense_id');
+    }
     public function create() : void
     {
         if(!isset($_SESSION["id"]))

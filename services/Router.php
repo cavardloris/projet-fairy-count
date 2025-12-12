@@ -27,6 +27,9 @@ class Router
             else if($_GET['route'] === 'createExpense') {
                 $this->ec->create();
             }
+            else if($_GET['route'] === 'deleteExpense') {
+                $this->ec->delete();
+            }
             else
             {
                 $this->ac->notFound();

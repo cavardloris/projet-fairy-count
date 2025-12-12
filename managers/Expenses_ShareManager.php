@@ -123,10 +123,13 @@ class ExpenseShareManager extends AbstractManager
         ]);
     }
 
-    public function deleteByExpenseId(int $expenseId): void
+    public function deleteByExpenseId(int $expenseId) : void
     {
-        $query = $this->db->prepare('DELETE FROM expenses_share WHERE expenses_id = :eid');
-        $query->execute(['eid' => $expenseId]);
+        $query = $this->db->prepare('DELETE FROM expenses_share WHERE expenses_id = :expense_id');
+        $parameters = [
+            "expense_id" => $expenseId
+        ];
+        $query->execute($parameters);
     }
 
     public function deleteByUserId(int $userId): void
