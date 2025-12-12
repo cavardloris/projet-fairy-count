@@ -2,247 +2,187 @@
 
 class ExpenseShareManager extends AbstractManager
 {
+    private ExpenseManager $expenseManager;
+    private UserManager $userManager;
+
     public function __construct()
     {
         parent::__construct();
+        $this->expenseManager = new ExpenseManager();
+        $this->userManager = new UserManager();
     }
 
     public function findAll(): array
     {
         $query = $this->db->prepare('SELECT * FROM expenses_share');
         $query->execute();
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        $expenseShares = [];
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach($result as $item)
-        {
-            $expenseManager = new ExpenseManager();
-            $userManager = new UserManager();
-            
-            $expense = $expenseManager->findById($item["expenses_id"]);
-            $user = $userManager->findById($item["users_id"]);
-            
-            $expenseShare = new ExpenseShare(
+        $shares = [];
+
+        foreach ($results as $item) {
+            $expense = $this->expenseManager->findById($item['expenses_id']);
+            $user = $this->userManager->findById($item['users_id']);
+
+            if (!$expense || !$user) {
+                continue;
+            }
+
+            $shares[] = new ExpenseShare(
                 $expense,
                 $user,
-                $item["share_amounts"]
+                $item['share_amounts']
             );
-            $expenseShares[] = $expenseShare;
         }
 
-        return $expenseShares;
+        return $shares;
     }
 
     public function findByExpenseId(int $expenseId): array
     {
-        $query = $this->db->prepare('SELECT * FROM expenses_share WHERE expenses_id = :expenses_id');
-        $parameters = [
-            "expenses_id" => $expenseId
-        ];
-        $query->execute($parameters);
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        $expenseShares = [];
+        $expense = $this->expenseManager->findById($expenseId);
+        if (!$expense) return [];
 
-        $expenseManager = new ExpenseManager();
-        $expense = $expenseManager->findById($expenseId);
-        
-        if (!$expense) {
-            return [];
+        $query = $this->db->prepare('SELECT * FROM expenses_share WHERE expenses_id = :eid');
+        $query->execute(['eid' => $expenseId]);
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $shares = [];
+        foreach ($results as $item) {
+            $user = $this->userManager->findById($item['users_id']);
+            if (!$user) continue;
+
+            $shares[] = new ExpenseShare($expense, $user, $item['share_amounts']);
         }
 
-        $userManager = new UserManager();
-
-        foreach($result as $item)
-        {
-            $user = $userManager->findById($item["users_id"]);
-            
-            $expenseShare = new ExpenseShare(
-                $expense,
-                $user,
-                $item["share_amounts"]
-            );
-            $expenseShares[] = $expenseShare;
-        }
-
-        return $expenseShares;
+        return $shares;
     }
 
     public function findByUserId(int $userId): array
     {
-        $query = $this->db->prepare('SELECT * FROM expenses_share WHERE users_id = :users_id');
-        $parameters = [
-            "users_id" => $userId
-        ];
-        $query->execute($parameters);
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        $expenseShares = [];
+        $user = $this->userManager->findById($userId);
+        if (!$user) return [];
 
-        $userManager = new UserManager();
-        $user = $userManager->findById($userId);
-        
-        if (!$user) {
-            return [];
+        $query = $this->db->prepare('SELECT * FROM expenses_share WHERE users_id = :uid');
+        $query->execute(['uid' => $userId]);
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $shares = [];
+        foreach ($results as $item) {
+            $expense = $this->expenseManager->findById($item['expenses_id']);
+            if (!$expense) continue;
+
+            $shares[] = new ExpenseShare($expense, $user, $item['share_amounts']);
         }
 
-        $expenseManager = new ExpenseManager();
-
-        foreach($result as $item)
-        {
-            $expense = $expenseManager->findById($item["expenses_id"]);
-            
-            $expenseShare = new ExpenseShare(
-                $expense,
-                $user,
-                $item["share_amounts"]
-            );
-            $expenseShares[] = $expenseShare;
-        }
-
-        return $expenseShares;
+        return $shares;
     }
 
     public function findByExpenseAndUser(int $expenseId, int $userId): ?ExpenseShare
     {
-        $query = $this->db->prepare('SELECT * FROM expenses_share WHERE expenses_id = :expenses_id AND users_id = :users_id');
-        $parameters = [
-            "expenses_id" => $expenseId,
-            "users_id" => $userId
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('SELECT * FROM expenses_share WHERE expenses_id = :eid AND users_id = :uid');
+        $query->execute(['eid' => $expenseId, 'uid' => $userId]);
         $item = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($item)
-        {
-            $expenseManager = new ExpenseManager();
-            $userManager = new UserManager();
-            
-            $expense = $expenseManager->findById($item["expenses_id"]);
-            $user = $userManager->findById($item["users_id"]);
-            
-            return new ExpenseShare(
-                $expense,
-                $user,
-                $item["share_amounts"]
-            );
-        }
+        if (!$item) return null;
 
-        return null;
+        $expense = $this->expenseManager->findById($item['expenses_id']);
+        $user = $this->userManager->findById($item['users_id']);
+
+        if (!$expense || !$user) return null;
+
+        return new ExpenseShare($expense, $user, $item['share_amounts']);
     }
 
-    public function create(ExpenseShare $expenseShare): void
+    public function create(ExpenseShare $share): void
     {
-        $query = $this->db->prepare('INSERT INTO expenses_share (expenses_id, users_id, share_amounts) VALUES (:expenses_id, :users_id, :share_amounts)');
-        $parameters = [
-            "expenses_id" => $expenseShare->getExpense()->getId(),
-            "users_id" => $expenseShare->getUser()->getId(),
-            "share_amounts" => $expenseShare->getShareAmounts()
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('INSERT INTO expenses_share (expenses_id, users_id, share_amounts) VALUES (:eid, :uid, :amount)');
+        $query->execute([
+            'eid' => $share->getExpense()->getId(),
+            'uid' => $share->getUser()->getId(),
+            'amount' => $share->getShareAmounts()
+        ]);
     }
 
-    public function update(ExpenseShare $expenseShare): void
+    public function update(ExpenseShare $share): void
     {
-        $query = $this->db->prepare('UPDATE expenses_share SET share_amounts = :share_amounts WHERE expenses_id = :expenses_id AND users_id = :users_id');
-        $parameters = [
-            "expenses_id" => $expenseShare->getExpense()->getId(),
-            "users_id" => $expenseShare->getUser()->getId(),
-            "share_amounts" => $expenseShare->getShareAmounts()
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('UPDATE expenses_share SET share_amounts = :amount WHERE expenses_id = :eid AND users_id = :uid');
+        $query->execute([
+            'eid' => $share->getExpense()->getId(),
+            'uid' => $share->getUser()->getId(),
+            'amount' => $share->getShareAmounts()
+        ]);
     }
 
-    public function delete(ExpenseShare $expenseShare): void
+    public function delete(ExpenseShare $share): void
     {
-        $query = $this->db->prepare('DELETE FROM expenses_share WHERE expenses_id = :expenses_id AND users_id = :users_id');
-        $parameters = [
-            "expenses_id" => $expenseShare->getExpense()->getId(),
-            "users_id" => $expenseShare->getUser()->getId()
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('DELETE FROM expenses_share WHERE expenses_id = :eid AND users_id = :uid');
+        $query->execute([
+            'eid' => $share->getExpense()->getId(),
+            'uid' => $share->getUser()->getId()
+        ]);
     }
 
     public function deleteByExpenseId(int $expenseId): void
     {
-        $query = $this->db->prepare('DELETE FROM expenses_share WHERE expenses_id = :expenses_id');
-        $parameters = [
-            "expenses_id" => $expenseId
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('DELETE FROM expenses_share WHERE expenses_id = :eid');
+        $query->execute(['eid' => $expenseId]);
     }
 
     public function deleteByUserId(int $userId): void
     {
-        $query = $this->db->prepare('DELETE FROM expenses_share WHERE users_id = :users_id');
-        $parameters = [
-            "users_id" => $userId
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('DELETE FROM expenses_share WHERE users_id = :uid');
+        $query->execute(['uid' => $userId]);
     }
 
     public function getTotalShareByExpense(int $expenseId): float
     {
-        $query = $this->db->prepare('SELECT SUM(share_amounts) as total FROM expenses_share WHERE expenses_id = :expenses_id');
-        $parameters = [
-            "expenses_id" => $expenseId
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('SELECT SUM(share_amounts) as total FROM expenses_share WHERE expenses_id = :eid');
+        $query->execute(['eid' => $expenseId]);
         $result = $query->fetch(PDO::FETCH_ASSOC);
-        
-        return (float) ($result['total'] ?? 0.0);
+
+        return (float)($result['total'] ?? 0.0);
     }
 
     public function userParticipatesInExpense(int $expenseId, int $userId): bool
     {
-        $query = $this->db->prepare('SELECT COUNT(*) as count FROM expenses_share WHERE expenses_id = :expenses_id AND users_id = :users_id');
-        $parameters = [
-            "expenses_id" => $expenseId,
-            "users_id" => $userId
-        ];
-        $query->execute($parameters);
+        $query = $this->db->prepare('SELECT COUNT(*) as cnt FROM expenses_share WHERE expenses_id = :eid AND users_id = :uid');
+        $query->execute(['eid' => $expenseId, 'uid' => $userId]);
         $result = $query->fetch(PDO::FETCH_ASSOC);
-        
-        return (int) ($result['count'] ?? 0) > 0;
+
+        return (int)($result['cnt'] ?? 0) > 0;
     }
 
     public function addMultipleParticipants(int $expenseId, array $participants): void
     {
-        foreach ($participants as $participant) {
-            $expenseManager = new ExpenseManager();
-            $userManager = new UserManager();
-            
-            $expense = $expenseManager->findById($expenseId);
-            $user = $userManager->findById($participant['user_id']);
-            
-            $expenseShare = new ExpenseShare(
-                $expense,
-                $user,
-                $participant['share']
-            );
-            
-            $this->create($expenseShare);
+        $expense = $this->expenseManager->findById($expenseId);
+        if (!$expense) return;
+
+        foreach ($participants as $p) {
+            $user = $this->userManager->findById($p['user_id']);
+            if (!$user) continue;
+
+            $this->create(new ExpenseShare($expense, $user, $p['share']));
         }
     }
 
     public function splitExpenseEqually(int $expenseId, array $userIds): void
     {
-        $expenseManager = new ExpenseManager();
-        $expense = $expenseManager->findById($expenseId);
-        
-        if (!$expense) {
-            throw new Exception("Dépense non trouvée");
-        }
-        
-        $totalAmount = $expense->getAmount();
-        $numberOfParticipants = count($userIds);
-        $sharePerPerson = $totalAmount / $numberOfParticipants;
-        
-        foreach ($userIds as $userId) {
-            $userManager = new UserManager();
-            $user = $userManager->findById($userId);
-            
-            if ($user) {
-                $expenseShare = new ExpenseShare($expense, $user, $sharePerPerson);
-                $this->create($expenseShare);
+        $expense = $this->expenseManager->findById($expenseId);
+        if (!$expense) return;
+
+        $total = $expense->getAmount();
+        $count = count($userIds);
+        if ($count === 0) return;
+
+        $share = $total / $count;
+
+        foreach ($userIds as $uid) {
+            $user = $this->userManager->findById($uid);
+            if (!$user) continue;
+
+            if (!$this->userParticipatesInExpense($expenseId, $uid)) {
+                $this->create(new ExpenseShare($expense, $user, $share));
             }
         }
     }
