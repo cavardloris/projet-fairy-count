@@ -2,6 +2,11 @@
 
 class AuthController extends AbstractController
 {
+    public function create() : void{
+        if(!isset($_SESSION['id'])){
+            $this->redirect('index.php?controller=index');
+        }
+    }
     public function home() : void
     {
         if(!isset($_SESSION["id"]))
