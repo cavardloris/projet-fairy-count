@@ -4,7 +4,7 @@ class RefundsManager extends AbstractManager
 {
     public function __construct()
     {
-        parent::__construct();        
+        parent::__construct();
     }
 
     public function findAll() : array
@@ -59,6 +59,17 @@ class RefundsManager extends AbstractManager
         }
 
         return null;
+    }
+
+    public function create(Refund $refund) : void
+    {
+        $query = $this->db->prepare('INSERT INTO refunds (debtor_id, creditor_id, amount) VALUES (:debtor_id, :creditor_id, :amount)');
+        $parameters = [
+            "debtor_id" => $refund->getDebtor()->getId(),
+            "creditor_id" => $refund->getCreditor()->getId(),
+            "amount" => $refund->getAmount()
+        ];
+        $query->execute($parameters);
     }
 
 }
