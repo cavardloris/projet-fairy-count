@@ -59,4 +59,14 @@ class ExpenseManager extends AbstractManager
 
         return (int) $this->db->lastInsertId();
     }
+
+    public function delete(int $id) : void
+    {
+
+        $query = $this->db->prepare('DELETE FROM expenses WHERE id = :id');
+        $parameters = [
+            "id" => $id
+        ];
+        $query->execute($parameters);
+    }
 }
