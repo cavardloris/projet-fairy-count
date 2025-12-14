@@ -50,11 +50,55 @@
                             <a href="index.php?route=deleteExpense&id={{ expense.id }}" class="btn btn-danger btn-sm">
                                 <span class="bi bi-trash"></span>
                             </a>
-                            <a href="index.php?route=checkExpense&id={{ expense.id }}" class="btn btn-success btn-sg">
-                                <span class="bi bi-check-lg"></span>
-                            </a>
+                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#refundModal{{ expense.id }}">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
                         </td>
                     </tr>
+
+                    <div class="modal fade" id="refundModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="POST" action="index.php?route=createRefund">
+                                    <input type="hidden" name="expense_id" value="{{ expense.id }}">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Remboursements</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                <i class="bi bi-people"></i> Qui a remboursé ?
+                                            </label>
+                                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                                {% for share in expenseData.shares %}
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               name="users_id[]"
+                                                               value="{{ share.user.id }}"
+                                                               id="refund{{ expense.id }}_user{{ share.user.id }}">
+                                                        <label class="form-check-label" for="refund{{ expense.id }}_user{{ share.user.id }}">
+                                                            {{ share.user.name }} - Doit {{ share.shareAmounts|number_format(2, ',', ' ') }} €
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            <small class="text-muted">Sélectionnez les personnes ayant remboursé</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            <i class="bi bi-x-circle"></i> Annuler
+                                        </button>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="bi bi-check-circle"></i> Enregistrer
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                 {% else %}
                     <tr>
                         <td colspan="5" class="text-center">Aucune dépense trouvée</td>
@@ -63,9 +107,8 @@
                 </tbody>
             </table>
         </section>
-
-
     </main>
+
     <div class="modal fade" id="newExpenseModal" tabindex="-1" aria-labelledby="newExpenseModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

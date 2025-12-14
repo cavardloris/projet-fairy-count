@@ -13,3 +13,9 @@ Pour la classe Expenses_ShareManager, le code à été réaliser en collaboratio
 
 Pour le index.html.twig on s’est aidé de ChatGPT et de la doc officielle pour comprendre la logique de Bootstrap : exemple comment réaliser un bouton.
 Pour le ExpenseController, aide de l’IA car lorsque j’appuyais sur le bouton check pour valider un remboursement, seule une seule valeur entrait dans la table SQL refunds, on a donc utilisé le prompt : comment faire en sorte que si j’ai deux utilisateurs qui doivent un remboursement, les deux entrent dans le tableau SQL en cas de remboursement
+
+Demande à l'ia ChatGpt comment je pourrais faire en sorte que seul les personnes concernés par un remboursemen s'affiche avec le prompt : comment est ce que je pourrais avoir que les personnes concernés par le remboursement dans le check
+et la réponse :
+Créé un modal unique par dépense dans la boucle (avec ID refundModal{{ expense.id }})
+Modifié le bouton pour cibler le bon modal (data-bs-target="#refundModal{{ expense.id }}")
++ utilisation de la doc officielle de Bootstrap

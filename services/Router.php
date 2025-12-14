@@ -33,6 +33,9 @@ class Router
             else if($_GET['route'] === 'checkExpense') {
                 $this->ec->check();
             }
+            else if($_GET['route'] === 'createRefund') {
+                $this->ec->createRefund();
+            }
             else
             {
                 $this->ac->notFound();
