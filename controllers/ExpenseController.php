@@ -2,6 +2,63 @@
 
 class ExpenseController extends AbstractController
 {
+    public function createRefund() : void
+    {
+        if(!isset($_SESSION["id"]))
+        {
+            $this->redirect('index.php?route=login');
+            return;
+        }
+
+        if(!empty($_POST))
+        {
+            $expenseId = intval($_POST['expense_id']);
+            $selectedUsers = $_POST['users_id'] ?? [];
+
+            if($expenseId > 0 && !empty($selectedUsers))
+            {
+                $expenseManager = new ExpenseManager();
+                $expenseShareManager = new ExpenseShareManager();
+                $refundsManager = new RefundsManager();
+
+                $expense = $expenseManager->findById($expenseId);
+
+                if($expense)
+                {
+                    $creditor = $expense->getUser();
+
+                    foreach($selectedUsers as $userId)
+                    {
+                        $userId = intval($userId);
+
+                        $share = $expenseShareManager->findByExpenseAndUser($expenseId, $userId);
+
+                        if($share)
+                        {
+                            $debtor = $share->getUser();
+                            $amount = $share->getShareAmounts();
+
+                            $refund = new Refund($debtor, $creditor, $amount);
+                            $refundsManager->create($refund);
+
+                            $expenseShareManager->delete($share);
+                        }
+                    }
+
+                    $remainingShares = $expenseShareManager->findByExpenseId($expenseId);
+                    if(empty($remainingShares))
+                    {
+                        $expenseManager->delete($expenseId);
+                    }
+
+                    $this->redirect('index.php?success=refunds_created');
+                    return;
+                }
+            }
+        }
+
+        $this->redirect('index.php?error=invalid_refund_data');
+    }
     public function check() : void
     {
         if(!isset($_SESSION["id"]))
