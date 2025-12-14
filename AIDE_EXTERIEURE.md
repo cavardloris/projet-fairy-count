@@ -11,3 +11,5 @@ Le prompt: Donne moi la requete sql necessaire pour avoir les infos du debiteur 
 
 Pour la classe Expenses_ShareManager, le code à été réaliser en collaboration avec Gemini ou on lui indiquait ce que l'on voulait et ce qu'on ne voulait pas car le code renvoyé n'etait pas compréhensible à notre niveau
 
+Pour le index.html.twig on s’est aidé de ChatGPT et de la doc officielle pour comprendre la logique de Bootstrap : exemple comment réaliser un bouton.
+Pour le ExpenseController, aide de l’IA car lorsque j’appuyais sur le bouton check pour valider un remboursement, seule une seule valeur entrait dans la table SQL refunds, on a donc utilisé le prompt : comment faire en sorte que si j’ai deux utilisateurs qui doivent un remboursement, les deux entrent dans le tableau SQL en cas de remboursement
